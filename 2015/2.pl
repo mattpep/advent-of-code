@@ -1,24 +1,21 @@
+use strict;
 use List::Util qw[max sum];
 
 sub paper_required {
-	my ($a, $b, $c) = @_;
-	my $needed = 2 * ($a*$b + $b*$c + $a*$c);
+	my ($x, $y, $z) = @_;
+	my @lengths = sort { $a <=> $b } ($x, $y, $z);
 
-	if (max(($a,$b,$c)) == $a) {
-		$needed += $b*$c;
-	}
-	elsif (max(($a,$b,$c)) == $b) {
-		$needed += $a*$c;
-	}
-	else {
-		$needed += $a*$b;
-	}
+	my $needed = 2 * ($x*$y + $y*$z + $x*$z);
+
+	$needed += $lengths[0] * $lengths[1];
 	return $needed;
 }
+
+my $paper = 0;
 while (<>) {
 	chomp;
-        ($a, $b, $c) = split /x/;
-	$n += paper_required($a, $b, $c);
+        my ($a, $b, $c) = split /x/;
+	$paper += paper_required($a, $b, $c);
 }
 
-print "total needed at end is $n\n";
+print "total paper needed at end is $paper\n";
