@@ -1,24 +1,33 @@
+use strict;
 use List::Util qw[max sum];
 
-sub paper_required {
-	my ($a, $b, $c) = @_;
-	my $needed = 2 * ($a*$b + $b*$c + $a*$c);
+sub ribbon_required {
+	my ($x, $y, $z) = @_;
+	my @lengths = sort { $a <=> $b } ($x, $y, $z);
 
-	if (max(($a,$b,$c)) == $a) {
-		$needed += $b*$c;
-	}
-	elsif (max(($a,$b,$c)) == $b) {
-		$needed += $a*$c;
-	}
-	else {
-		$needed += $a*$b;
-	}
+	my $needed = $x*$y*$z; # bow
+	$needed += 2 * ($lengths[0] + $lengths[1]); # wrapping
 	return $needed;
 }
-while (<>) {
-	chomp;
-        ($a, $b, $c) = split /x/;
-	$n += paper_required($a, $b, $c);
+
+sub paper_required {
+	my ($x, $y, $z) = @_;
+	my @lengths = sort { $a <=> $b } ($x, $y, $z);
+
+	my $needed = 2 * ($x*$y + $y*$z + $x*$z);
+
+	$needed += $lengths[0] * $lengths[1];
+	return $needed;
 }
 
-print "total needed at end is $n\n";
+my $paper = 0;
+my $ribbon = 0;
+while (<>) {
+	chomp;
+        my ($a, $b, $c) = split /x/;
+	$paper += paper_required($a, $b, $c);
+	$ribbon += ribbon_required($a, $b, $c);
+}
+
+print "total paper needed at end is $paper\n";
+print "total ribbon needed at end is $ribbon\n";
