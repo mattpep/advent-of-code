@@ -1,0 +1,5 @@
+turn on 2,3 through 3,5
+turn on 17,9 through 20,13
+turn on 4,5 through 10,14
+turn off 1,4 through 5,9
+toggle 16,19 through 21,21
