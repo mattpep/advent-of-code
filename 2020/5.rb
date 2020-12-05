@@ -1,0 +1,12 @@
+codes = ARGF.readlines.map &:strip
+
+def seatcode_to_id code
+  row = code[0...7].tr('FB', '01').to_i(2)
+  col = code[7..-1].tr('LR', '01').to_i(2)
+
+  col + row * 8
+end
+
+ids = codes.map { |code| seatcode_to_id code }
+
+puts "Part 1: #{ids.max}"
