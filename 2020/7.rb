@@ -2,6 +2,7 @@ require 'set'
 
 CONTAINING_PATTERN = /^(?<container>[a-z]+ [a-z]+) bags contain (?<content>(no other bags)|(((\d+ [a-z]+ [a-z]+) bags?)(, )?)+)\.$/
 BAG_PATTERN = /(?<qty>\d+) (?<adjective>[a-z]+) (?<color>[a-z]+) bags?/
+OUTER = 'shiny gold'
 
 records = ARGF.readlines.map(&:strip)
 bag_data = Hash.new
@@ -27,7 +28,7 @@ containers = Set.new
 
 old_container_count = containers.count
 bag_data.each do |k,v|
-  if v.map(&:last).include? "shiny gold"
+  if v.map(&:last).include? OUTER
     containers << k
   end
 end
@@ -42,3 +43,12 @@ while containers.count > old_container_count
 end
 
 puts "Part 1: possible containers = #{containers.count}"
+
+
+def count_content outer, bag_data
+  bag_data[outer].sum do |inner|
+    inner.first * (1 + count_content(inner.last, bag_data))
+  end
+end
+
+puts "Part 2: #{count_content OUTER, bag_data}"
