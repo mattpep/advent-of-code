@@ -45,9 +45,9 @@ end
 puts "Part 1: possible containers = #{containers.count}"
 
 
-def count_content outer, bag_data
-  bag_data[outer].sum do |inner|
-    inner.first * (1 + count_content(inner.last, bag_data))
+def count_content type, bag_data
+  bag_data[type].sum do |count,type|
+    count * (1 + count_content(type, bag_data))
   end
 end
 
