@@ -1,49 +1,13 @@
+require_relative '../aoc/two_reg_cpu'
+
 program = ARGF.readlines.map &:strip
 
+cpu1 = AOC::TwoRegCPU.new(a: 0)
+cpu1.execute program
 
-a = 0
-b = 0
-pc = 0
+puts "Part 1: #{cpu1.b}"
 
-while true
-  instruction = program[pc]
-  break if instruction.nil?
-  op, args = instruction.split(' ', 2)
-  case op
-  when 'hlf' # half
-    a /=2 if args == 'a'
-    b /=2 if args == 'b'
-    pc += 1
-  when 'tpl' # triple
-    a *=3 if args == 'a'
-    b *=3 if args == 'b'
-    pc += 1
-  when 'inc' # increment
-    a+=1 if args == 'a'
-    b+=1 if args == 'b'
-    pc += 1
-  when 'jmp' # jump
-    pc += args.to_i
-  when 'jie' # jump if even
-    if args.split(',')[0] == 'a' && a.even?
-      pc += args.split(',')[1].to_i
-    elsif args.split(',')[0] == 'b' && b.even?
-      pc += args.split(',')[1].to_i
-    else
-      pc += 1
-    end
-  when 'jio' # jump if ONE
-    if args.split(',')[0] == 'a' && a == 1
-      pc += args.split(',')[1].to_i
-    elsif args.split(',')[0] == 'b' && b == 1
-      pc += args.split(',')[1].to_i
-    else
-      pc += 1
-    end
-  else
-    puts "Invalid instruction #{instruction}"
-    break
-  end
-end
+cpu2 = AOC::TwoRegCPU.new(a: 1)
+cpu2.execute program
 
-puts "Part 1: #{b}"
+puts "Part 2: #{cpu2.b}"
