@@ -29,10 +29,10 @@ module AOC
 
     def move(direction)
       case direction
-      when '>' then @cur_x += 1
-      when '<' then @cur_x -= 1
-      when '^' then @cur_y -= 1
-      when 'v' then @cur_y += 1
+      when '>' then self.cur_x += 1
+      when '<' then self.cur_x -= 1
+      when '^' then self.cur_y -= 1
+      when 'v' then self.cur_y += 1
       end
       check_bounds
     end
@@ -41,23 +41,23 @@ module AOC
 
     def debug(message)
       puts "--- #{message} ---"
-      puts "current position: #{@cur_x}, #{@cur_y}"
-      @grid.each { |row| puts "row: #{row.inspect}" }
+      puts "current position: #{cur_x}, #{cur_y}"
+      grid.each { |row| puts "row: #{row.inspect}" }
       puts
       puts
     end
 
     def check_bounds
-      @grid.each { |row| row << 0 } if (@cur_x + 1) > @grid.first.size  # right
-      if @cur_x < 0                                                     # left
-        @grid.each { |row| row.insert(0,0) }
-        @cur_x = 0
+      grid.each { |row| row << 0 } if (cur_x + 1) > grid.first.size  # right
+      if cur_x < 0                                                   # left
+        grid.each { |row| row.insert(0,0) }
+        self.cur_x = 0
       end
-      new_row = [0] * @grid.first.size
-      @grid << new_row if (@cur_y + 1) > @grid.size                     # down
-      if @cur_y < 0                                                     # up
-        @grid.insert(0, new_row)
-        @cur_y = 0
+      new_row = [0] * grid.first.size
+      grid << new_row if (cur_y + 1) > grid.size                     # down
+      if cur_y < 0                                                   # up
+        grid.insert(0, new_row)
+        self.cur_y = 0
       end
     end
   end
