@@ -1,16 +1,30 @@
 module AOC
   class ManhattanGrid
-    def initialize(moves)
+    attr_accessor :cur_x, :cur_y, :grid
+
+    def initialize
       @grid = [ [1]  ]
-      @cur_x = 0
-      @cur_y = 0
-      moves.each { |m| move m }
+      home!
     end
 
-    def visited_houses
-      @grid.sum do |row|
-        row.filter { |cell| cell != 0 }.count
+    def home!
+      self.cur_x = 0
+      self.cur_y = 0
+    end
+
+    def walk path, &block
+      path.each do |m|
+        move m
+        yield self if block_given?
       end
+    end
+
+    def current_cell
+      grid[cur_y][cur_x]
+    end
+
+    def current_cell= val
+      grid[cur_y][cur_x] = val
     end
 
     def move(direction)
@@ -21,7 +35,6 @@ module AOC
       when 'v' then @cur_y += 1
       end
       check_bounds
-      @grid[@cur_y][@cur_x]+=1
     end
 
     private
