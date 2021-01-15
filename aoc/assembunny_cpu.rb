@@ -5,12 +5,16 @@ module AOC
     attr_accessor :a, :b, :c, :d, :pc
 
     def initialize
-      @a = 0
-      @b = 0
-      @c = 0
-      @d = 0
-      @pc = 0
       @debug = false
+      reset
+    end
+
+    def reset
+      self.a = 0
+      self.b = 0
+      self.c = 0
+      self.d = 0
+      self.pc = 0
     end
 
     def debug= val
