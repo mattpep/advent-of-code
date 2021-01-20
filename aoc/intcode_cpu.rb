@@ -1,7 +1,8 @@
 module AOC
-  class InvalidInstruction < StandardError; end
+  class InvalidInstructionError < StandardError; end
+  class InputExhaustedError < StandardError; end
 
-  # Used in 2019:2, 2019:5
+  # Used in 2019:2, 2019:5, 2019:7
   class IntcodeCPU
     POSITION  = 0
     IMMEDIATE = 1
@@ -31,6 +32,7 @@ module AOC
     def reset
       self.ip = 0
       self.output = nil
+      self.input = nil
       self.memory.replace []
     end
 
@@ -47,7 +49,13 @@ module AOC
           self.memory[args[2]] = decode_value(args[0], modes[0]) * decode_value(args[1], modes[1])
           self.ip += 4
         when I_READ
-          self.memory[args[0]] = input
+          value = if input.class == Array
+                    input.shift
+                  else
+                    input
+                  end
+          raise InputExhaustedError if value.nil?
+          self.memory[args[0]] = value
           self.ip += 2
         when I_WRITE
           self.output = decode_value(args[0], modes[0])
@@ -75,7 +83,7 @@ module AOC
           self.memory[args[2] ] = condition ? 1 : 0
           self.ip += 4
         when I_TERM then return memory.first
-        else raise InvalidInstruction, { op: op, addr_modes: modes, args: args}.to_s
+        else raise InvalidInstructionError, { op: op, addr_modes: modes, args: args}.to_s
         end
       end
       # terminated by running off end
