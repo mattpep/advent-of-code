@@ -10,6 +10,10 @@ module AOC
     I_MUL = 2
     I_READ = 3
     I_WRITE = 4
+    I_JNZ = 5
+    I_JZ = 6
+    I_SLT = 7
+    I_SEQ = 8
     I_TERM = 99
 
     attr_accessor :ip, :memory, :input, :output
@@ -24,7 +28,11 @@ module AOC
       self.memory = Marshal.load Marshal.dump program
     end
 
-    def reset; self.ip = 0 ; end
+    def reset
+      self.ip = 0
+      self.output = nil
+      self.memory.replace []
+    end
 
     def execute seed=nil
       self.memory[1..2] = seed if seed
@@ -44,6 +52,28 @@ module AOC
         when I_WRITE
           self.output = decode_value(args[0], modes[0])
           self.ip += 2
+        when I_JNZ
+          condition = decode_value(args[0], modes[0])
+          if condition.zero?
+            self.ip += 3
+          else
+            self.ip = decode_value(args[1], modes[1])
+          end
+        when I_JZ
+          condition = decode_value(args[0], modes[0])
+          if condition.zero?
+            self.ip = decode_value(args[1], modes[1])
+          else
+            self.ip += 3
+          end
+        when I_SLT
+          condition = decode_value(args[0], modes[0]) < decode_value(args[1], modes[1])
+          self.memory[args[2] ] = condition ? 1 : 0
+          self.ip += 4
+        when I_SEQ
+          condition = decode_value(args[0], modes[0]) == decode_value(args[1], modes[1])
+          self.memory[args[2] ] = condition ? 1 : 0
+          self.ip += 4
         when I_TERM then return memory.first
         else raise InvalidInstruction, { op: op, addr_modes: modes, args: args}.to_s
         end
