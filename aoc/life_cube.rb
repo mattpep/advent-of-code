@@ -1,19 +1,9 @@
+require_relative './life_grid'
+
 module AOC
-  class LifeCube
-    OCCUPIED = '#'
-    EMPTY = '.'
 
-    attr_reader :expanding
-    attr_accessor :cells
-
-    def initialize expanding=false
-      @expanding = expanding
-      @cells = []
-    end
-
-    def population
-      cells.flatten.count { |value| value == OCCUPIED }
-    end
+  # Used in 2020:17
+  class LifeCube < LifeGrid
 
     def tick
       expand if expanding
