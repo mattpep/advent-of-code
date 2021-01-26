@@ -22,3 +22,9 @@ part1 = (0...(places.count)).to_a.permutation.map do |route|
 end.min
 
 puts "Part 1: #{part1}"
+
+part2 = (0...(places.count)).to_a.permutation.map do |route|
+  route.each_cons(2).map { |hop| distances[hop.sort] }.sum
+end.max
+
+puts "Part 2: #{part2}"
