@@ -3,7 +3,7 @@ program = ARGF.readlines.map &:strip
 PATTERN = /(?<register>\w+) (?<op>(inc|dec)) (?<amount>-?\d+) if (?<test>\w+) (?<comparison>[^ ]+) (?<target>-?\d+)/
 
 registers = Hash.new
-
+ever_max = 0
 program.each do |instruction|
   # puts "Instruction: #{instruction}"
   instruction.match(PATTERN) do |m|
@@ -19,6 +19,8 @@ program.each do |instruction|
       end
     end
   end
+  ever_max = [ever_max, registers.values.max].max
 end
 
 puts "Part 1: #{registers.values.max}"
+puts "Part 2: #{ever_max}"
