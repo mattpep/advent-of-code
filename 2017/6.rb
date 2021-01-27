@@ -22,3 +22,4 @@ while seen.count( seen.last) == 1
 end
 
 puts "Part 1: #{seen.count - 1}"
+puts "Part 2: #{seen.count - (seen.index(seen.last))-1}"
