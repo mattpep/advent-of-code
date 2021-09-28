@@ -17,4 +17,11 @@ RSpec.describe AOC::MetaTree do
   it "calculates the meta sum" do
     expect(subject.metasum).to eq 138
   end
+
+  context "part 2" do
+    it "can calculate the 'value'" do
+      expect(subject.value).to eq 66
+    end
+  end
+
 end

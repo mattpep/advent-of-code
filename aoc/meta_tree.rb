@@ -25,5 +25,15 @@ module AOC
     def metasum
       meta.sum + children.sum { |child| child.metasum }
     end
+
+    def value
+      if children.length == 0
+        meta.sum
+      else
+        meta.sum do |idx|
+          children[idx-1].nil? ? 0 : children[idx-1].value
+        end
+      end
+    end
   end
 end
