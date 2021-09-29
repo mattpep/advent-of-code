@@ -17,3 +17,9 @@ def discover(start, seen=Set.new)
 end
 
 puts "Part 1: #{discover(0).size}"
+
+part2 = PROGRAMS.keys.map do |start|
+  discover(start)
+end.uniq.length
+
+puts "Part 2: #{part2}"
