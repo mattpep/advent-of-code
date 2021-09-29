@@ -1,15 +1,16 @@
 module AOC
   class ManhattanGrid
-    attr_accessor :cur_x, :cur_y, :grid
+    attr_accessor :cur_x, :cur_y, :grid, :home_x, :home_y
 
     def initialize
       @grid = [ [1]  ]
+      @home_x = @home_y = 0
       home!
     end
 
     def home!
-      self.cur_x = 0
-      self.cur_y = 0
+      self.cur_x = home_x
+      self.cur_y = home_y
     end
 
     def walk path, &block
@@ -52,12 +53,14 @@ module AOC
       if cur_x < 0                                                   # left
         grid.each { |row| row.insert(0,0) }
         self.cur_x = 0
+        self.home_x += 1
       end
       new_row = [0] * grid.first.size
       grid << new_row if (cur_y + 1) > grid.size                     # down
       if cur_y < 0                                                   # up
         grid.insert(0, new_row)
         self.cur_y = 0
+        self.home_y += 1
       end
     end
   end
