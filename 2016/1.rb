@@ -33,18 +33,30 @@ class Direction
   end
 end
 
+part2_loc = nil
 facing = Direction.new
 location = [0,0]
+seen = [ location.dup ]
 moves.each do |move|
   direction = move[0]
   distance = move[1..-1].to_i
   facing.turn direction
-  case facing.to_s
-  when 'North' then location[0] -= distance
-  when 'East' then location[1] += distance
-  when 'South' then location[0] += distance
-  when 'West'  then location[1] -= distance
+  distance.times do |_|
+    case facing.to_s
+    when 'North' then location[0] -= 1
+    when 'East' then location[1] += 1
+    when 'South' then location[0] += 1
+    when 'West'  then location[1] -= 1
+    end
+    if seen.include?(location) && part2_loc.nil?
+      part2_loc = location.dup
+    else
+      seen.append location.dup
+    end
   end
+
 end
 
 puts "Part 1: #{location.map(&:abs).sum}"
+
+puts "Part 2: #{part2_loc.map(&:abs).sum}"
