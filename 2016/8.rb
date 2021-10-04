@@ -1,7 +1,7 @@
 operations = ARGF.readlines.map &:strip
 
 GRID_WIDTH = 50
-GRID_HEIGHT = 50
+GRID_HEIGHT = 6
 
 class Array
   def transpose!
@@ -37,4 +37,4 @@ end
 part1 = grid.flatten.count '#'
 puts "Part 1: #{part1}"
 
-# puts grid.map(&:join).join("\n")
+puts grid.map(&:join).join("\n")
