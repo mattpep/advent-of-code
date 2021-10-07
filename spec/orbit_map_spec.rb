@@ -14,6 +14,12 @@ J)K
 K)L
 EOT
 
+test_data2 = <<EOT
+#{test_data1}
+K)YOU
+I)SAN
+EOT
+
 RSpec.describe AOC::OrbitMap do
   context "part 1" do
     subject { AOC::OrbitMap.new test_data1 }
@@ -28,7 +34,15 @@ RSpec.describe AOC::OrbitMap do
     end
 
     it "can count all orbits in the network" do
-      expect(subject.count).to eq 42
+      expect(subject.count_orbits).to eq 42
+    end
+  end
+
+  context 'part 2' do
+    subject { AOC::OrbitMap.new test_data2 }
+
+    it "can count transfers" do
+      expect(subject.count_transfers_from('YOU', 'SAN')).to eq 4
     end
   end
 end
