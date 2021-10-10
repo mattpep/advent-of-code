@@ -13,3 +13,11 @@ until valid? password
 end
 
 puts "Part 1: #{ password }"
+
+password.next!
+
+until valid? password
+  password.next!
+end
+
+puts "Part 2: #{ password }"
