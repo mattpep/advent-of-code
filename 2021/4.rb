@@ -40,7 +40,7 @@ class Grid
   end
 
   def process number
-    return if win?
+    return if win? # don't process any more numbers when won; we don't want to alter our score
     cells.each do |row|
       row.each do |cell|
         if number == cell[:number]
@@ -56,13 +56,19 @@ players = Array.new(GRIDS.count) do |i|
   Grid.new(GRIDS[i])
 end
 
-
+part1 = nil
 NUMBERS.each do |num|
   players.each do |player|
     player.process num
-    if player.win?
-      part1 = player.score
-      puts "Part 1: #{part1}"
+    if player.win? && !part1
+      if players.select(&:win?).count == 1
+        part1 = player.score
+        puts "Part 1: #{part1}"
+      end
+    end
+    if players.reject(&:win?).count == 0
+      part2 = player.score
+      puts "Part 2: #{part2}"
       exit
     end
   end
