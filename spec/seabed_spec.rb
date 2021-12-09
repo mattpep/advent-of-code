@@ -46,4 +46,12 @@ RSpec.describe AOC::Seabed do
   it 'can calculate risk level' do
     expect(subject.risk_level).to eq 15
   end
+
+  context 'identifying basins' do
+    it 'can size them correctly' do
+      expect(subject.basins[[1,0]].size).to eq 3
+      expect(subject.basins[[9,0]].size).to eq 9
+      expect(subject.basins[[2,2]].size).to eq 14
+    end
+  end
 end

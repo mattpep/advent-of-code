@@ -16,6 +16,19 @@ module AOC
       low_points
     end
 
+    def basins
+      b = {}
+      heights.length.times do |y|
+        heights.first.length.times do |x|
+          next if heights[y][x] == 9
+          low_point = find_low_point_from(x,y)
+          b[low_point] = Array.new if b[low_point].nil?
+          b[low_point] << [x,y]
+        end
+      end
+      b
+    end
+
     def risk_level
       lowest_points.map do |x,y|
         heights[y][x] + 1
