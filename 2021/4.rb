@@ -2,14 +2,14 @@ NUMBERS = ARGF.readline.split(',').map &:to_i
 
 _ = ARGF.readline
 
-GRIDS = ARGF.read.split("\n\n").map do |row|
+boards = ARGF.read.split("\n\n").map do |row|
   row.split("\n").map do |column|
     column.split.map &:to_i
   end
 end
 
 
-class Grid
+class BingoBoard
   attr_accessor :cells, :last_call
 
   def initialize numbers
@@ -52,8 +52,8 @@ class Grid
   end
 end
 
-players = Array.new(GRIDS.count) do |i|
-  Grid.new(GRIDS[i])
+players = Array.new(boards.count) do |i|
+  BingoBoard.new(boards[i])
 end
 
 part1 = nil
