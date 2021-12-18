@@ -1,11 +1,29 @@
 data = ARGF.readline.strip
 
 class Hash
+  OPS = %i[ + * min max literal > < == ]
+
   def version_sum
     return self[:version] if self[:type_id] == BinaryStream::TYPE_LITERAL
     return self[:version] + self[:content].map do |child|
       child.version_sum
     end.sum
+  end
+
+  def evaluate
+    return self[:content] if self[:content].class == Integer
+    children = self[:content].map do |child|
+      child.evaluate
+    end
+    case self[:type_id]
+    when OPS.index(:+) then children.sum
+    when OPS.index(:*) then children.reduce(:*)
+    when OPS.index(:min) then children.min
+    when OPS.index(:max) then children.max
+    when OPS.index(:<) then (children[0] < children[1]) ? 1 : 0
+    when OPS.index(:>) then (children[0] > children[1]) ? 1 : 0
+    when OPS.index(:==) then (children[0] == children[1]) ? 1 : 0
+    end
   end
 end
 
@@ -84,4 +102,7 @@ stream = BinaryStream.new BinaryStream.hex_to_bin data
 outer = stream.read_packet
 
 part1 = outer.version_sum
-puts "Part1: #{part1.inspect}"
+puts "Part1: #{part1}"
+
+part2 = outer.evaluate
+puts "Part2: #{part2}"
