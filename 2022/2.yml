@@ -1,0 +1,32 @@
+- hosts: all
+  gather_facts: false
+  connection: local
+  vars:
+    matches: "{{ lookup('file', 'data/2.txt') | split('\n') | map('split', ' ') }}"
+    shapes:
+      A: rock
+      B: paper
+      C: scissors
+      X: rock
+      Y: paper
+      Z: scissors
+    shape_scores:
+      rock: 1
+      paper: 2
+      scissors: 3
+  tasks:
+    - name: part 1
+      debug:
+        msg: >-
+          {% set scores = { 'part1': 0, 'part2': 0 } -%}
+          {%- for match in matches -%}
+            {%- set a = shapes[match[0]] %}
+            {%- set b = shapes[match[1]] %}
+            {%- if a == b %}
+              {%- set _x = scores.update( {'part1': scores['part1'] + 3 + shape_scores[b]})  %}
+            {%- elif a == 'scissors' and b == 'rock' or a == 'paper' and b == 'scissors' or a == 'rock' and b == 'paper' %}
+              {%- set _x = scores.update( {'part1': scores['part1'] + 6 + shape_scores[b]})  %}
+            {%- else %}
+              {%- set _x = scores.update( {'part1': scores['part1'] + 0 + shape_scores[b]})  %}
+            {%- endif %}
+          {% endfor %}{{ scores['part1'] }}
