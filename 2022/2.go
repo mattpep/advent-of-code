@@ -31,6 +31,28 @@ var ScoreForShape = map[string]int{
 	"scissors": 3,
 }
 
+func ShapeForResult(DesiredResult byte, OpponentShape string) string {
+	if DesiredResult == 'X' { // lose
+		if OpponentShape == "scissors" {
+			return "paper"
+		} else if OpponentShape == "rock" {
+			return "scissors"
+		} else {
+			return "rock"
+		}
+	} else if DesiredResult == 'Z' { // win
+		if OpponentShape == "scissors" {
+			return "rock"
+		} else if OpponentShape == "rock" {
+			return "paper"
+		} else {
+			return "scissors"
+		}
+	} else { // draw
+		return OpponentShape
+	}
+}
+
 func ConvertMatchToScore(ActionA string, ActionB string) int {
 	var outcome int
 
@@ -55,15 +77,22 @@ func main() {
 	}
 	defer file.Close()
 
-	var RunningScore = 0
+	var RunningScore1 = 0
+	var RunningScore2 = 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		var TheirAction = ConvertSymbolToAction(scanner.Text()[0])
 		var MyAction = ConvertSymbolToAction(scanner.Text()[2])
 
-		RunningScore += ConvertMatchToScore(MyAction, TheirAction)
+		RunningScore1 += ConvertMatchToScore(MyAction, TheirAction)
+
+		MyAction = ShapeForResult(scanner.Text()[2], TheirAction)
+		var thisScore = ConvertMatchToScore(MyAction, TheirAction)
+		// fmt.Printf("My action for match %s will be %s, this score is %d\n", scanner.Text(), MyAction, thisScore)
+		RunningScore2 += thisScore
 	}
 
-	fmt.Printf("Part 1 (score): %d\n", RunningScore)
+	fmt.Printf("Part 1 (score): %d\n", RunningScore1)
+	fmt.Printf("Part 2 (score): %d\n", RunningScore2)
 }
