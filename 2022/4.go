@@ -8,8 +8,10 @@ import (
 	"strings"
 )
 
-func RangeOverlaps(range1 [2]int, range2 [2]int) bool {
-	if range1[0] >= range2[0] && range1[1] <= range2[1] || range2[0] >= range1[0] && range2[1] <= range1[1] {
+func RangeOverlaps(range1 [2]int, range2 [2]int, fully bool) bool {
+	if fully && (range1[0] >= range2[0] && range1[1] <= range2[1] || range2[0] >= range1[0] && range2[1] <= range1[1]) {
+		return true
+	} else if !fully && (range2[0] <= range1[1] && range2[0] >= range1[0] || range1[0] <= range2[1] && range1[0] >= range2[0]) {
 		return true
 	} else {
 		return false
@@ -25,6 +27,7 @@ func main() {
 	defer file.Close()
 
 	var ContainCount = 0
+	var OverlapCount = 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -38,10 +41,14 @@ func main() {
 			}
 		}
 
-		if RangeOverlaps(bounds[0], bounds[1]) == true {
+		if RangeOverlaps(bounds[0], bounds[1], true) {
 			ContainCount++
+		}
+		if RangeOverlaps(bounds[0], bounds[1], false) {
+			OverlapCount++
 		}
 	}
 
 	fmt.Printf("Part 1 (containing count): %d\n", ContainCount)
+	fmt.Printf("Part 2 (overlapping count): %d\n", OverlapCount)
 }
