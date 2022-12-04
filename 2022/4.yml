@@ -1,0 +1,33 @@
+- hosts: all
+  gather_facts: false
+  connection: local
+  vars:
+    assignment_pairs: "{{ lookup('file', 'data/4.txt') | split('\n') | map('split', ',')|map('map','split', '-')|map('map','map','int') }}"
+
+  tasks:
+    - name: calculate which containments and overlaps
+      set_fact:
+        contains: >-
+          {%- for pair in assignment_pairs %}
+            {%- if pair[0][0] >= pair[1][0] and pair[0][1] <= pair[1][1] or pair[1][0] >= pair[0][0] and pair[1][1] <= pair[0][1] %}
+              1
+            {%- else %}
+              0
+            {%- endif %}
+          {%- endfor %}
+        overlaps: >-
+          {%- for pair in assignment_pairs %}
+            {%- if pair[1][0] <= pair[0][1] and pair[1][0] >= pair[0][0] or pair[0][0] <= pair[1][1] and pair[0][0] >= pair[1][0] %}
+              1
+            {%- else %}
+              0
+            {%- endif %}
+          {%- endfor %}
+    - name: part 1
+      debug:
+        msg: >-
+          {{ contains | split | map('int') | sum }}
+    - name: part 2
+      debug:
+        msg: >-
+          {{ overlaps | split | map('int') | sum }}
