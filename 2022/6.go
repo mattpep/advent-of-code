@@ -6,17 +6,32 @@ import (
 	"os"
 )
 
-func FindStartMarkerOffset(packet string) int {
-	for i := 0; i < len(packet)-4; i++ {
-		var slice = packet[i : i+4]
+func FindUniqueWindow(packet string, window int) int {
+	for i := 0; i < len(packet)-window; i++ {
+		var slice = packet[i : i+window]
 		// fmt.Printf("Looking at packet >%s<, slice >%s<, offset %d\n", packet, slice, i)
-		if (slice[0] != slice[1]) && (slice[0] != slice[2]) && (slice[0] != slice[3]) &&
-			(slice[1] != slice[2]) && (slice[1] != slice[3]) &&
-			(slice[2] != slice[3]) {
-			return i + 4
+		var letter_counts = map[byte]int{}
+		unique_count := 0
+		for j := 0; j < window; j++ {
+			if letter_counts[slice[j]] == 0 {
+				unique_count++
+			}
+			letter_counts[slice[j]]++
+		}
+
+		if unique_count == window {
+			return i + window
 		}
 	}
 	return -99
+}
+
+func FindStartOfMessage(packet string) int {
+	return FindUniqueWindow(packet, 14)
+}
+
+func FindStartOfPacket(packet string) int {
+	return FindUniqueWindow(packet, 4)
 }
 
 func main() {
@@ -30,6 +45,9 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	scanner.Scan()
 	packet := scanner.Text()
-	var start = FindStartMarkerOffset(packet)
-	fmt.Printf("Part 1 (first offset): %d\n", start)
+	var start = FindStartOfPacket(packet)
+	fmt.Printf("Part 1 (start of packet): %d\n", start)
+
+	start = FindStartOfMessage(packet)
+	fmt.Printf("Part 2 (start of message): %d\n", start)
 }
