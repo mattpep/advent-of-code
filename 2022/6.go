@@ -7,20 +7,29 @@ import (
 )
 
 func FindUniqueWindow(packet string, window int) int {
-	for i := 0; i < len(packet)-window; i++ {
-		var slice = packet[i : i+window]
-		// fmt.Printf("Looking at packet >%s<, slice >%s<, offset %d\n", packet, slice, i)
-		var letter_counts = map[byte]int{}
-		unique_count := 0
-		for j := 0; j < window; j++ {
-			if letter_counts[slice[j]] == 0 {
-				unique_count++
-			}
-			letter_counts[slice[j]]++
+	// initialise counts for window at the left-most position
+	var letter_counts = map[byte]int{}
+	unique_count := 0
+	for j := 0; j < window; j++ {
+		if letter_counts[packet[j]] == 0 {
+			unique_count++
 		}
+		letter_counts[packet[j]]++
+	}
 
+	// decrement count of first letter (and remove it), then
+	// increment count for next unseen letter (appending it)
+	for i := 0; i < len(packet)-window; i++ {
 		if unique_count == window {
 			return i + window
+		}
+		letter_counts[packet[i]] -= 1
+		if letter_counts[packet[i]] == 0 {
+			unique_count--
+		}
+		letter_counts[packet[i+window]] += 1
+		if letter_counts[packet[window+i]] == 1 {
+			unique_count++
 		}
 	}
 	return -99
