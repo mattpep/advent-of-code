@@ -29,6 +29,17 @@ func ParseGrid(lines []string) [][]int {
 	return result
 }
 
+func CountLeftVisible(grid [][]int, x int, y int) int {
+	count := 0
+	for xx := x - 1; xx >= 0; xx-- {
+		count++
+		if grid[y][xx] >= grid[y][x] {
+			break
+		}
+	}
+	return count
+}
+
 func IsCellBlockedLeft(grid [][]int, x int, y int) bool {
 	for xx := 0; xx < x; xx++ {
 		if grid[y][x] <= grid[y][xx] {
@@ -36,6 +47,17 @@ func IsCellBlockedLeft(grid [][]int, x int, y int) bool {
 		}
 	}
 	return false
+}
+
+func CountRightVisible(grid [][]int, x int, y int) int {
+	count := 0
+	for xx := x + 1; xx < len(grid[0]); xx++ {
+		count++
+		if grid[y][xx] >= grid[y][x] {
+			break
+		}
+	}
+	return count
 }
 
 func IsCellBlockedRight(grid [][]int, x int, y int) bool {
@@ -47,6 +69,17 @@ func IsCellBlockedRight(grid [][]int, x int, y int) bool {
 	return false
 }
 
+func CountUpVisible(grid [][]int, x int, y int) int {
+	count := 0
+	for yy := y - 1; yy >= 0; yy-- {
+		count++
+		if grid[yy][x] >= grid[y][x] {
+			break
+		}
+	}
+	return count
+}
+
 func IsCellBlockedUp(grid [][]int, x int, y int) bool {
 	for yy := 0; yy < y; yy++ {
 		if grid[y][x] <= grid[yy][x] {
@@ -56,6 +89,17 @@ func IsCellBlockedUp(grid [][]int, x int, y int) bool {
 	return false
 }
 
+func CountDownVisible(grid [][]int, x int, y int) int {
+	count := 0
+	for yy := y + 1; yy < len(grid); yy++ {
+		count++
+		if grid[yy][x] >= grid[y][x] {
+			break
+		}
+	}
+	return count
+}
+
 func IsCellBlockedDown(grid [][]int, x int, y int) bool {
 	for yy := y + 1; yy < len(grid); yy++ {
 		if grid[y][x] <= grid[yy][x] {
@@ -63,6 +107,15 @@ func IsCellBlockedDown(grid [][]int, x int, y int) bool {
 		}
 	}
 	return false
+}
+
+func CellScenicScore(grid [][]int, x int, y int) int {
+	score := 1
+	score *= CountUpVisible(grid, x, y)
+	score *= CountDownVisible(grid, x, y)
+	score *= CountLeftVisible(grid, x, y)
+	score *= CountRightVisible(grid, x, y)
+	return score
 }
 
 func IsCellVisible(grid [][]int, x int, y int) bool {
@@ -94,6 +147,19 @@ func CountVisible(grid [][]int) int {
 	return VisibleCells
 }
 
+func MaxScenicScore(grid [][]int) int {
+	maxScore := 0
+	for y := 0; y < len(grid); y++ {
+		for x := 0; x < len(grid[0]); x++ {
+			score := CellScenicScore(grid, x, y)
+			if score > maxScore {
+				maxScore = score
+			}
+		}
+	}
+	return maxScore
+}
+
 func main() {
 	file, err := os.Open("data/8.txt")
 	if err != nil {
@@ -113,6 +179,8 @@ func main() {
 	grid := ParseGrid(lines)
 
 	VisibleCells := CountVisible(grid)
+	maxScore := MaxScenicScore(grid)
 
 	fmt.Printf("Part 1 (visible cells): %d\n", VisibleCells)
+	fmt.Printf("Part 2 (max scenic score): %d\n", maxScore)
 }
