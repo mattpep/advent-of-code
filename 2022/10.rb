@@ -2,7 +2,7 @@ input = ARGF.readlines.map &:strip
 
 class CPU
   attr_accessor :watches
-  attr_reader :signal
+  attr_reader :signal, :display
 
   def initialize
     self.watches = Array.new
@@ -33,8 +33,12 @@ class CPU
     @x = 1
     waited = false
     cycle = 1
+    @display = Array.new(240) { '.' }
+    sprite_position = @x
 
     while true
+      pixel = cycle.pred
+      # start of cycle
       if @program[@pc][:opcode] == "addx"
         if waited == false
           # puts "   first cycle, so skipping"
@@ -45,10 +49,13 @@ class CPU
         # puts " noop"
       end
 
+      # during cycle
       this_signal = @x * cycle
       if is_watched? cycle
         signal += this_signal
       end
+
+      @display[pixel] = (sprite_position.pred..sprite_position.succ).include?(pixel%40) ? '#' : '.'
       
       if @program[@pc][:opcode] == 'addx'
         if !waited
@@ -64,6 +71,9 @@ class CPU
         puts "Unknown instruction #{@program[@pc][:opcode]} at addr #{@program[@pc]}"
       end
 
+      # end of cycle
+      sprite_position = @x
+      # puts "cycle #{cycle}: Sprite position #{  ">" + ("." * sprite_position.pred) + '###' + ('.'* (40-sprite_position-2)) +"<" }"
       cycle += 1
 
       # puts "end of cycle #{cycle.pred}, x = #{@x}"
@@ -81,3 +91,5 @@ cpu.watches = [20, 60, 100, 140, 180, 220]
 signal = cpu.run
 
 puts "Part 1 (signal strength): #{signal}"
+puts "Part 2 (display) "
+puts cpu.display.each_slice(40).to_a.map(&:join).join("\n")
