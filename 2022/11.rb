@@ -15,14 +15,19 @@ class Circle
     monkeys.map(&:inspections).max(2).reduce(:*)
   end
 
+  def modulus
+    monkeys.map(&:modulus).reduce(:*)
+  end
+
 end
 
 class Monkey
   attr_accessor :inspections
-  attr_reader :id
+  attr_reader :id, :modulus
 
-  def initialize(circle, record)
+  def initialize(circle, record, worrying=false)
     @circle = circle
+    @worrying = worrying
     @id = record[0].split.last[0..-2].to_i
     self.inspections = 0
     @items = record[1].split[2..-1].map { |item| item.chomp(',').to_i }
@@ -34,6 +39,7 @@ class Monkey
         fields[1].to_i.send(fields[0].to_sym, x.to_i)
       end
     end
+    @modulus = record[3].split.last.to_i
     @test = lambda { |x| x % record[3].split.last.to_i == 0 }
     @targets = {
       true =>  record[4].split.last.to_i,
@@ -53,8 +59,9 @@ class Monkey
     @items.dup.each do |item|
       old = item
       item = @operation.call(item)
-      item /= 3
+      item /= 3 unless @worrying
       item = item.floor
+      item %= @circle.modulus
 
       test_result = @test.call(item)
       target = @targets[ test_result ]
@@ -69,16 +76,30 @@ class Monkey
   end
 end
 
-circle = Circle.new
+circle1 = Circle.new
+circle2 = Circle.new
 data.each do |record|
-  monkey= Monkey.new circle, record
-  circle.add monkey
+  monkey= Monkey.new circle1, record
+  circle1.add monkey
+
+  monkey= Monkey.new circle2, record, "worrying"
+  circle2.add monkey
 end
 
 20.times do |x|
-  circle.monkeys.each { |m| m.tick }
+  circle1.monkeys.each { |m| m.tick }
   # puts "\nAfter #{x.succ} times"
   # circle.monkeys.each { |m| m.show }
 end
 
-puts "Part 1 (monkey business): #{circle.monkey_business}"
+puts "Part 1 (monkey business): #{circle1.monkey_business}"
+
+10000.times do |x|
+  circle2.monkeys.each { |m| m.tick }
+  # if x % 500 == 0
+  #   puts "\nAfter #{x.succ} times"
+  #   circle2.monkeys.each { |m| m.show }
+  # end
+end
+
+puts "Part 2 (monkey business): #{circle2.monkey_business}"
