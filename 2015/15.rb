@@ -22,6 +22,16 @@ def four_parts
   end
 end
 
+def calculate_calories ingred, quants
+  ingreds = ingred.keys.sort
+
+  pairings = ingreds.zip quants
+
+  cals = pairings.map do |ing, qty|
+    ingred[ing]['calories'] * qty
+  end.reduce(:+)
+end
+
 def score ingred, quants
   ingreds = ingred.keys.sort
 
@@ -38,12 +48,18 @@ def score ingred, quants
   end.reduce(:*)
 end
 
-part1 = -99
+part1 = part2 = -99
 four_parts do |quad|
     this_score = score ingredients, quad
+    cals = calculate_calories ingredients, quad
+
     if this_score > part1
       part1 = this_score
+    end
+    if cals == 500 && this_score > part2
+      part2 = this_score
     end
 end
 
 puts "Part 1 (max score): #{part1}"
+puts "Part 1 (max score of recipes with 500 cals): #{part2}"
