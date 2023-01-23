@@ -14,6 +14,30 @@ var right_column_filled_grid = []string{"......#", "......#", "......#", "......
 var bottom_two_rows_full_grid = []string{"#######", "#######", ".......", ".......", ".......", ".......", ".......", ".......", "......."}
 var small_block_at_bottom_grid = []string{"..###..", "..###..", "..###..", ".......", ".......", ".......", ".......", ".......", "......."}
 
+type RowContentTest struct {
+	row         string
+	has_content bool
+}
+
+var RowContentTests = []RowContentTest{
+	RowContentTest{
+		row:         ".......",
+		has_content: false,
+	},
+	RowContentTest{
+		row:         "#......",
+		has_content: true,
+	},
+	RowContentTest{
+		row:         "......#",
+		has_content: true,
+	},
+	RowContentTest{
+		row:         "....#..",
+		has_content: true,
+	},
+}
+
 type BlockedTest struct {
 	isblocked bool
 	shape     []string
@@ -67,6 +91,13 @@ var BlockedLeftTests = []BlockedTest{
 		grid:      empty_grid,
 		top:       7,
 		left:      3,
+	},
+	BlockedTest{
+		isblocked: true,
+		shape:     shapes[1], // 3x3 plus
+		grid:      empty_grid,
+		top:       4,
+		left:      0,
 	},
 	BlockedTest{
 		isblocked: true,
@@ -176,6 +207,42 @@ func TestBlockedLeft(t *testing.T) {
 		expected := test.isblocked
 		if result != expected {
 			t.Error(fmt.Sprintf("Test %d: Expectation for blocked_left failed: got %t expected %t", i, result, expected))
+		}
+	}
+}
+
+func TestRowHasContent(t *testing.T) {
+	for _, test := range RowContentTests {
+		result := RowHasContent(test.row)
+		expected := test.has_content
+		if result != expected {
+			t.Error(fmt.Sprintf("Expectation for RowHasContent() failed for left_column_filled_grid: got %t expected %t", result, expected))
+		}
+	}
+}
+
+func TestFirstFreeRow(t *testing.T) {
+
+	type FreeRowTest struct {
+		grid []string
+		row  int
+	}
+	tests := []FreeRowTest{
+		FreeRowTest{
+			grid: empty_grid,
+			row:  0,
+		},
+		FreeRowTest{
+			grid: bottom_two_rows_full_grid,
+			row:  2,
+		},
+	}
+
+	for _, test := range tests {
+		result, _ := FirstFreeRow(test.grid)
+		expected := test.row
+		if result != expected {
+			t.Error(fmt.Sprintf("Expectation for landed() failed for left_column_filled_grid: got %d expected %d", result, expected))
 		}
 	}
 }
