@@ -1,0 +1,35 @@
+- hosts: all
+  gather_facts: false
+  connection: local
+  vars:
+    game_data: "{{ lookup('file', 'data/4.txt') | split('\n') | map('split', ': ') }}"
+
+  tasks:
+
+    - name: extract ids
+      set_fact:
+        game_ids: "{{ game_data | map('first') | map('split', ' ') | map('last') | map('int') }}"
+
+    - name: extract winning tickets
+      set_fact:
+        winners: "{{ game_data | map('last') | map('split', ' | ') | map('first') | map('regex_replace', '  ', ' ' ) | map('split', ' ') | map('map','int') }}"
+
+    - name: extract held ticket info
+      set_fact:
+        tickets: "{{ game_data | map('last') | map('split', ' | ') | map('last') | map('regex_replace', '  ', ' ' ) | map('split', ' ') | map('map','int') }}"
+
+    - name: calculate winning number counts
+      set_fact:
+        counts: "{{ counts | default([]) + [item[0] | intersect(item[1]) | length-1] | reject('lt', 0) }}"
+      with_items:
+        - "{{ winners | zip(tickets) }}"
+
+    - name: calculate points
+      set_fact:
+        points: "{{ points |default(0)| int + 2 ** item }}"
+      with_items:
+        - "{{counts }}"
+
+    - name: show part 1 result
+      debug:
+        msg: "{{ points}}"
