@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 games = ARGF.readlines.map(&:strip).each_with_object({}) do |row, hash|
   parts = row.split(': ')
   id = parts[0].split[1].to_i
   hands = parts[1].split('; ').map do |hand|
-    colors = hand.split(', ').each_with_object({}) do |color,hash|
+    hand.split(', ').each_with_object({}) do |color, hsh|
       count_colour = color.split
-      hash[count_colour[1]] = count_colour[0].to_i
+      hsh[count_colour[1]] = count_colour[0].to_i
     end
   end
   hash[id] = hands
@@ -14,12 +16,11 @@ CONSTRAINT = {
   red: 12,
   green: 13,
   blue: 14
-}
+}.freeze
 
 def hand_possible?(hand, constraint)
-  return hand.all? { |color, hand_count| hand_count <= constraint[color.to_sym] }
+  hand.all? { |color, hand_count| hand_count <= constraint[color.to_sym] }
 end
-
 
 def game_possible?(game, constraint)
   game.all? { |hand| hand_possible?(hand, constraint) }
@@ -32,7 +33,7 @@ def game_power(game)
 end
 
 part1 = games.sum do |id, game|
-  if game_possible?(game,CONSTRAINT)
+  if game_possible?(game, CONSTRAINT)
     id
   else
     0
